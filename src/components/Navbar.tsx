@@ -48,7 +48,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link
-                  to={user.role === 'admin' ? '/admin/dashboard' : '/dealer/dashboard'}
+                  to={user.role === 'admin' ? '/admin' : '/dealer'}
                   className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-100 transition-colors"
                 >
                   <LayoutDashboard className="w-4 h-4" />

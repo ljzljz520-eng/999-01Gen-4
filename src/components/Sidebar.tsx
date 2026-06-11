@@ -20,12 +20,12 @@ export default function Sidebar({ role }: SidebarProps) {
   const isActive = (path: string) => location.pathname === path;
 
   const dealerItems = [
-    { path: '/dealer/dashboard', label: '仪表盘', icon: LayoutDashboard },
+    { path: '/dealer', label: '仪表盘', icon: LayoutDashboard },
     { path: '/dealer/devices', label: '设备列表', icon: Package },
   ];
 
   const adminItems = [
-    { path: '/admin/dashboard', label: '仪表盘', icon: LayoutDashboard },
+    { path: '/admin', label: '仪表盘', icon: LayoutDashboard },
     { path: '/admin/reviews', label: '审核管理', icon: FileCheck },
     { path: '/admin/devices', label: '设备管理', icon: Search },
     { path: '/admin/dealers', label: '经销商管理', icon: Users },

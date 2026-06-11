@@ -34,7 +34,7 @@ export default function Login() {
       const result = await authApi.login({ username, password, role });
       setToken(result.token);
       setUser(result.user);
-      navigate(result.user.role === 'admin' ? '/admin/dashboard' : '/dealer/dashboard', { replace: true });
+      navigate(result.user.role === 'admin' ? '/admin' : '/dealer', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : '登录失败');
     } finally {

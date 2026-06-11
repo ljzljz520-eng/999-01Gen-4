@@ -29,9 +29,12 @@ export function initDatabase(): void {
   database.exec(`
     CREATE TABLE IF NOT EXISTS dealers (
       id TEXT PRIMARY KEY,
+      code TEXT UNIQUE NOT NULL,
       name TEXT NOT NULL,
       contact_person TEXT,
+      contact_phone TEXT,
       phone TEXT,
+      email TEXT,
       address TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );

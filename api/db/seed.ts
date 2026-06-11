@@ -20,17 +20,17 @@ export function seedDatabase(): void {
   };
 
   const dealers = [
-    { id: generateId(), name: '北京家电销售有限公司', contactPerson: '张经理', phone: '010-12345678', address: '北京市朝阳区建国路88号' },
-    { id: generateId(), name: '上海家电销售有限公司', contactPerson: '李经理', phone: '021-87654321', address: '上海市浦东新区陆家嘴环路1000号' },
+    { id: generateId(), code: 'DL001', name: '北京家电销售有限公司', contactPerson: '张经理', contactPhone: '010-12345678', phone: '010-12345678', email: 'beijing@example.com', address: '北京市朝阳区建国路88号' },
+    { id: generateId(), code: 'DL002', name: '上海家电销售有限公司', contactPerson: '李经理', contactPhone: '021-87654321', phone: '021-87654321', email: 'shanghai@example.com', address: '上海市浦东新区陆家嘴环路1000号' },
   ];
 
   const insertDealer = db.prepare(`
-    INSERT INTO dealers (id, name, contact_person, phone, address)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO dealers (id, code, name, contact_person, contact_phone, phone, email, address)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   for (const dealer of dealers) {
-    insertDealer.run(dealer.id, dealer.name, dealer.contactPerson, dealer.phone, dealer.address);
+    insertDealer.run(dealer.id, dealer.code, dealer.name, dealer.contactPerson, dealer.contactPhone, dealer.phone, dealer.email, dealer.address);
   }
 
   const users = [
@@ -154,8 +154,8 @@ export function seedDatabase(): void {
         serviceCenterId
       );
 
-      const整机保修期 = 12;
-      const主要部件保修期 = 36;
+      const 整机保修期 = 12;
+      const 主要部件保修期 = 36;
       const warrantyStartDate = purchaseDateStr;
       const warrantyEndDate = addMonths(warrantyStartDate, 整机保修期);
       const warrantyStatus = invoiceExists ? calculateStatus(warrantyEndDate) : 'pending';

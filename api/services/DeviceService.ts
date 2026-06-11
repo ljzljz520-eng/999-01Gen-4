@@ -58,15 +58,22 @@ export class DeviceService {
 
     if (!row) return null;
 
+    const 整机保修期_months = row.整机保修期_months ?? 12;
+    const 主要部件保修期_months = row.主要部件保修期_months ?? 36;
+
     let warrantyStartDate = row.warranty_start_date || row.purchase_date;
     let warrantyEndDate = row.warranty_end_date;
     let warrantyStatus = row.warranty_status;
 
     if (!warrantyEndDate && warrantyStartDate) {
-      warrantyEndDate = addMonths(warrantyStartDate, row.整机保修期_months);
+      warrantyEndDate = addMonths(warrantyStartDate, 整机保修期_months);
     }
 
-    if (row.invoice_exists && warrantyStatus === 'pending' && warrantyEndDate) {
+    if (!warrantyStatus && row.invoice_exists && warrantyEndDate) {
+      warrantyStatus = calculateStatus(warrantyEndDate);
+    } else if (!warrantyStatus && !row.invoice_exists) {
+      warrantyStatus = 'pending';
+    } else if (row.invoice_exists && warrantyStatus === 'pending' && warrantyEndDate) {
       warrantyStatus = calculateStatus(warrantyEndDate);
     }
 
@@ -83,11 +90,11 @@ export class DeviceService {
       serviceCenterId: row.service_center_id,
     };
 
-    const warranty: Warranty = {整机保修期: `${row.整机保修期_months}个月`,
-      主要部件保修期: `${row.主要部件保修期_months}个月`,
+    const warranty: Warranty = {整机保修期: `${整机保修期_months}个月`,
+      主要部件保修期: `${主要部件保修期_months}个月`,
       保修开始日期: warrantyStartDate || '待确认',
       保修结束日期: warrantyEndDate || '待确认',
-      保修状态: warrantyStatus,
+      保修状态: warrantyStatus as 'active' | 'expired' | 'pending',
     };
 
     const extendedWarranty: ExtendedWarranty | null = row.ew_id
@@ -102,14 +109,14 @@ export class DeviceService {
 
     const serviceCenter: ServiceCenter = {
       id: row.service_center_id,
-      name: row.sc_name,
-      address: row.sc_address,
-      phone: row.sc_phone,
+      name: row.sc_name || '暂无',
+      address: row.sc_address || '暂无',
+      phone: row.sc_phone || '暂无',
       serviceHours: row.sc_service_hours || '周一至周日 9:00-18:00',
-      province: row.sc_province,
-      city: row.sc_city,
-      latitude: row.sc_latitude,
-      longitude: row.sc_longitude,
+      province: row.sc_province || '',
+      city: row.sc_city || '',
+      latitude: row.sc_latitude || 0,
+      longitude: row.sc_longitude || 0,
     };
 
     return { device, warranty, extendedWarranty, serviceCenter };
@@ -180,15 +187,22 @@ export class DeviceService {
     const rows = this.db.prepare(listSql).all(...listParams) as any[];
 
     const list: DeviceInfoResponse[] = rows.map((row) => {
+      const 整机保修期_months = row.整机保修期_months ?? 12;
+      const 主要部件保修期_months = row.主要部件保修期_months ?? 36;
+
       let warrantyStartDate = row.warranty_start_date || row.purchase_date;
       let warrantyEndDate = row.warranty_end_date;
       let warrantyStatus = row.warranty_status;
 
       if (!warrantyEndDate && warrantyStartDate) {
-        warrantyEndDate = addMonths(warrantyStartDate, row.整机保修期_months);
+        warrantyEndDate = addMonths(warrantyStartDate, 整机保修期_months);
       }
 
-      if (row.invoice_exists && warrantyStatus === 'pending' && warrantyEndDate) {
+      if (!warrantyStatus && row.invoice_exists && warrantyEndDate) {
+        warrantyStatus = calculateStatus(warrantyEndDate);
+      } else if (!warrantyStatus && !row.invoice_exists) {
+        warrantyStatus = 'pending';
+      } else if (row.invoice_exists && warrantyStatus === 'pending' && warrantyEndDate) {
         warrantyStatus = calculateStatus(warrantyEndDate);
       }
 
@@ -205,11 +219,11 @@ export class DeviceService {
         serviceCenterId: row.service_center_id,
       };
 
-      const warranty: Warranty = {整机保修期: `${row.整机保修期_months}个月`,
-        主要部件保修期: `${row.主要部件保修期_months}个月`,
+      const warranty: Warranty = {整机保修期: `${整机保修期_months}个月`,
+        主要部件保修期: `${主要部件保修期_months}个月`,
         保修开始日期: warrantyStartDate || '待确认',
         保修结束日期: warrantyEndDate || '待确认',
-        保修状态: warrantyStatus,
+        保修状态: warrantyStatus as 'active' | 'expired' | 'pending',
       };
 
       const extendedWarranty: ExtendedWarranty | null = row.ew_id
@@ -224,14 +238,14 @@ export class DeviceService {
 
       const serviceCenter: ServiceCenter = {
         id: row.service_center_id,
-        name: row.sc_name,
-        address: row.sc_address,
-        phone: row.sc_phone,
+        name: row.sc_name || '暂无',
+        address: row.sc_address || '暂无',
+        phone: row.sc_phone || '暂无',
         serviceHours: row.sc_service_hours || '周一至周日 9:00-18:00',
-        province: row.sc_province,
-        city: row.sc_city,
-        latitude: row.sc_latitude,
-        longitude: row.sc_longitude,
+        province: row.sc_province || '',
+        city: row.sc_city || '',
+        latitude: row.sc_latitude || 0,
+        longitude: row.sc_longitude || 0,
       };
 
       return { device, warranty, extendedWarranty, serviceCenter };
@@ -366,15 +380,22 @@ export class DeviceService {
     const rows = this.db.prepare(listSql).all(...listParams) as any[];
 
     const list = rows.map((row) => {
+      const 整机保修期_months = row.整机保修期_months ?? 12;
+      const 主要部件保修期_months = row.主要部件保修期_months ?? 36;
+
       let warrantyStartDate = row.warranty_start_date || row.purchase_date;
       let warrantyEndDate = row.warranty_end_date;
       let warrantyStatus = row.warranty_status;
 
       if (!warrantyEndDate && warrantyStartDate) {
-        warrantyEndDate = addMonths(warrantyStartDate, row.整机保修期_months);
+        warrantyEndDate = addMonths(warrantyStartDate, 整机保修期_months);
       }
 
-      if (row.invoice_exists && warrantyStatus === 'pending' && warrantyEndDate) {
+      if (!warrantyStatus && row.invoice_exists && warrantyEndDate) {
+        warrantyStatus = calculateStatus(warrantyEndDate);
+      } else if (!warrantyStatus && !row.invoice_exists) {
+        warrantyStatus = 'pending';
+      } else if (row.invoice_exists && warrantyStatus === 'pending' && warrantyEndDate) {
         warrantyStatus = calculateStatus(warrantyEndDate);
       }
 
@@ -391,11 +412,11 @@ export class DeviceService {
         serviceCenterId: row.service_center_id,
       };
 
-      const warranty: Warranty = {整机保修期: `${row.整机保修期_months}个月`,
-        主要部件保修期: `${row.主要部件保修期_months}个月`,
+      const warranty: Warranty = {整机保修期: `${整机保修期_months}个月`,
+        主要部件保修期: `${主要部件保修期_months}个月`,
         保修开始日期: warrantyStartDate || '待确认',
         保修结束日期: warrantyEndDate || '待确认',
-        保修状态: warrantyStatus,
+        保修状态: warrantyStatus as 'active' | 'expired' | 'pending',
       };
 
       const extendedWarranty: ExtendedWarranty | null = row.ew_id
@@ -410,14 +431,14 @@ export class DeviceService {
 
       const serviceCenter: ServiceCenter = {
         id: row.service_center_id,
-        name: row.sc_name,
-        address: row.sc_address,
-        phone: row.sc_phone,
+        name: row.sc_name || '暂无',
+        address: row.sc_address || '暂无',
+        phone: row.sc_phone || '暂无',
         serviceHours: row.sc_service_hours || '周一至周日 9:00-18:00',
-        province: row.sc_province,
-        city: row.sc_city,
-        latitude: row.sc_latitude,
-        longitude: row.sc_longitude,
+        province: row.sc_province || '',
+        city: row.sc_city || '',
+        latitude: row.sc_latitude || 0,
+        longitude: row.sc_longitude || 0,
       };
 
       const dealer = row.dealer_id

@@ -137,10 +137,12 @@ export interface DealerStats {
 export interface Dealer {
   id: string;
   name: string;
+  code: string;
   contactPerson: string;
-  phone: string;
+  contactPhone: string;
+  email: string;
   address: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export const DeviceTypeLabels: Record<DeviceType, string> = {
